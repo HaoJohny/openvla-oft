@@ -840,6 +840,11 @@ def libero_dataset_transform(trajectory: Dict[str, Any]) -> Dict[str, Any]:
     trajectory["observation"]["gripper_state"] = trajectory["observation"]["state"][:, -2:]  # 2D gripper state
     return trajectory
 
+def franka_pickup_cube_dataset_transform(trajectory: Dict[str, Any]) -> Dict[str, Any]:
+    # Gripper action is already 1 = open, 0 = closed (see zarr_to_episodes.py), so no inversion.
+    trajectory["observation"]["EEF_state"] = trajectory["observation"]["state"][:, :6]
+    trajectory["observation"]["gripper_state"] = trajectory["observation"]["state"][:, -2:]
+    return trajectory
 
 def aloha_dataset_transform(trajectory: Dict[str, Any]) -> Dict[str, Any]:
     # Don't need to do anything because dataset is already in the correct format
@@ -925,6 +930,7 @@ OXE_STANDARDIZATION_TRANSFORMS = {
     "libero_goal_no_noops": libero_dataset_transform,
     "libero_10_no_noops": libero_dataset_transform,
     "libero_4_task_suites_no_noops": libero_dataset_transform,
+    "franka_pickup_cube": franka_pickup_cube_dataset_transform,
     ### ALOHA fine-tuning datasets
     "aloha1_fold_shorts_20_demos": aloha_dataset_transform,
     "aloha1_fold_shirt_30_demos": aloha_dataset_transform,
